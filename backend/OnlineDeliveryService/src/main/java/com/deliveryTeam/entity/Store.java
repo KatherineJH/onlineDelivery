@@ -1,33 +1,24 @@
 package com.deliveryTeam.entity;
 
-import java.util.List;
-import java.util.ArrayList;
 import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Store {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long storeId;
 
     private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
     private String location;
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
 
     @ManyToOne
     @JoinColumn(name = "owner_id")

@@ -1,6 +1,5 @@
 package com.deliveryTeam.service.serviceImpl;
 
-import com.deliveryTeam.dto.UserDTO;
 import com.deliveryTeam.entity.User;
 import com.deliveryTeam.repository.UserRepository;
 import com.deliveryTeam.service.user.UserService;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -24,21 +22,19 @@ public class UserServiceImpl implements UserService {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
-    //회원가입
+
     @Override
-    public UserDTO registerUser(UserDTO userDTO) {
-        if (userRepository.existsByEmail(userDTO.getEmail())) {
+    public User registerUser(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("이미 존재하는 이메일입니다.");
         }
-
-        User user = convertToEntity(userDTO);
         // 비밀번호 암호화
-        user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        return convertToDTO(userRepository.save(user));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
     }
-    //로그인
+
     @Override
-    public UserDTO login(String email, String password) {
+    public User login(String email, String password) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("이메일 또는 비밀번호가 일치하지 않습니다."));
 
@@ -46,68 +42,46 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("이메일 또는 비밀번호가 일치하지 않습니다.");
         }
 
-        return convertToDTO(user);
+        return user;
     }
-    //사용자 조회
+
     @Override
-    public UserDTO getUserById(Long id) {
+    public User getUserById(Long id) {
         return userRepository.findById(id)
-                .map(this::convertToDTO)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
     }
+
     @Override
-    public UserDTO getUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
-                .map(this::convertToDTO)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
     }
+
     @Override
-    public List<UserDTO> getAllUsers() {
-        return userRepository.findAll().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
-    //사용자 수정
+
     @Override
-    public UserDTO updateUser(Long id, UserDTO userDTO) {
+    public User updateUser(Long id, User user) {
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
-        existingUser.setUsername(userDTO.getUsername());
-        existingUser.setEmail(userDTO.getEmail());
-        if (userDTO.getPassword() != null && !userDTO.getPassword().isEmpty()) {
-            existingUser.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        existingUser.setUsername(user.getUsername());
+        existingUser.setEmail(user.getEmail());
+        if (user.getPassword() != null && !user.getPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
         }
-        existingUser.setRole(userDTO.getRole());
+        existingUser.setRole(user.getRole());
 
-        return convertToDTO(userRepository.save(existingUser));
+        return userRepository.save(existingUser);
     }
-    //사용자 삭제
+
     @Override
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
             throw new RuntimeException("사용자를 찾을 수 없습니다.");
         }
         userRepository.deleteById(id);
-    }
-    //DTO->Entity
-    private User convertToEntity(UserDTO userDTO) {
-        User user = new User();
-        user.setUserId(userDTO.getUserId());
-        user.setUsername(userDTO.getUsername());
-        user.setEmail(userDTO.getEmail());
-        user.setPassword(userDTO.getPassword());
-        user.setRole(userDTO.getRole());
-        return user;
-    }
-    //Entity->DTO
-    private UserDTO convertToDTO(User user) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUserId(user.getUserId());
-        userDTO.setUsername(user.getUsername());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setPassword(user.getPassword());
-        userDTO.setRole(user.getRole());
-        return userDTO;
     }
 }

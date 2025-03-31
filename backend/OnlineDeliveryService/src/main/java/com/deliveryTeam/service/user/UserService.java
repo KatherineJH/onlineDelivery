@@ -1,14 +1,14 @@
 package com.deliveryTeam.service.user;
 
-import com.deliveryTeam.dto.UserDTO;
+import com.deliveryTeam.entity.User;
 import java.util.List;
 
 public interface UserService {
-    UserDTO registerUser(UserDTO userDTO);
-    UserDTO login(String email, String password);
-    UserDTO getUserById(Long id);
-    UserDTO getUserByEmail(String email);
-    List<UserDTO> getAllUsers();
-    UserDTO updateUser(Long id, UserDTO userDTO);
+    User registerUser(User user);
+    User login(String email, String password);
+    User getUserById(Long id);
+    User getUserByEmail(String email);
+    List<User> getAllUsers();
+    User updateUser(Long id, User user);
     void deleteUser(Long id);
 }

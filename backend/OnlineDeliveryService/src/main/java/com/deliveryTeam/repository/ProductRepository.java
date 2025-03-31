@@ -13,6 +13,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
    List<Product> findByNameContaining(String name);
 
    //카테고리로 검색 ㅇㅇㅇ
-   List<Product> findByCategory(Long categoryId);
+   List<Product> findByCategoryCategoryId(Long categoryId);
 
 }

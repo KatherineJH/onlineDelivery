@@ -13,17 +13,31 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+
+    // product id로 검색
     public Product getProductById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 상품이 존재하지 않습니다."));
     }
 
+    // 키워드로 검색
     public List<Product> findByNameContaining(String name) {
         return productRepository.findByNameContaining(name);
     }
 
-    public List<Product> findByCategoryId(Long categoryId) {
-        return productRepository.findByCategoryId(categoryId);
+    //카테고리로 검색
+    public List<Product> findByCategoryCategoryId(Long categoryId) {
+        return productRepository.findByCategoryCategoryId(categoryId);
+    }
+
+    // 전체 조회
+    public List<Product> findAll() {
+        return productRepository.findAll();
+    }
+
+    // 등록
+    public Product save(Product product) {
+        return productRepository.save(product);
     }
 }
 

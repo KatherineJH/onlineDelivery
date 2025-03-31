@@ -13,16 +13,19 @@ import lombok.*;
 @Entity
 public class User {
   @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
-    private String username;
-    private String email;
-    private String password;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long userId;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Cart cart;
+  private String username;
+  private String email;
+  private String password;
 
-    @OneToMany(mappedBy = "user")
-    private List<OrderEntity> orders = new ArrayList<>();
+  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+  private Cart cart;
+
+  @OneToMany(mappedBy = "user")
+  private List<OrderEntity> orders = new ArrayList<>();
+
+  private USER_ROLE role = USER_ROLE.ROLE_CUSTOMER;
 
 }

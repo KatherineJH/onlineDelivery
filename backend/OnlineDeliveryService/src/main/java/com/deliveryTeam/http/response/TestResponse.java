@@ -1,4 +1,3 @@
 package com.deliveryTeam.http.response;
 
-public class TestResponse {
-}
+public class TestResponse {}

@@ -20,7 +20,6 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class OrderEntity {
 
     @Id
@@ -37,10 +36,9 @@ public class OrderEntity {
 
     private String status;
 
-    //orderDate를 자동으로 현재 시간으로 설정
+    // orderDate를 자동으로 현재 시간으로 설정
     @PrePersist
     protected void onCreate() {
-    this.orderDate = LocalDateTime.now();
-}
-    
+        this.orderDate = LocalDateTime.now();
+    }
 }

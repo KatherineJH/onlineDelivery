@@ -14,7 +14,6 @@ public class Cart {
     private Long cartId;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false,unique = true)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
-
 }

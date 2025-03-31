@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
-
 import lombok.*;
 
 @Getter
@@ -12,20 +11,19 @@ import lombok.*;
 @NoArgsConstructor
 @Entity
 public class User {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long userId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
 
-  private String username;
-  private String email;
-  private String password;
+    private String username;
+    private String email;
+    private String password;
 
-  @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-  private Cart cart;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Cart cart;
 
-  @OneToMany(mappedBy = "user")
-  private List<OrderEntity> orders = new ArrayList<>();
+    @OneToMany(mappedBy = "user")
+    private List<OrderEntity> orders = new ArrayList<>();
 
-  private USER_ROLE role = USER_ROLE.ROLE_CUSTOMER;
-
+    private USER_ROLE role = USER_ROLE.ROLE_CUSTOMER;
 }

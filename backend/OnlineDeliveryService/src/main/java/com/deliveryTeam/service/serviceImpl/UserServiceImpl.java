@@ -1,14 +1,15 @@
 package com.deliveryTeam.service.serviceImpl;
 
-import com.deliveryTeam.entity.User;
-import com.deliveryTeam.repository.UserRepository;
-import com.deliveryTeam.service.user.UserService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import com.deliveryTeam.entity.User;
+import com.deliveryTeam.repository.UserRepository;
+import com.deliveryTeam.service.user.UserService;
 
 @Service
 @Transactional
@@ -35,8 +36,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User login(String email, String password) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("이메일 또는 비밀번호가 일치하지 않습니다."));
+        User user =
+                userRepository
+                        .findByEmail(email)
+                        .orElseThrow(() -> new RuntimeException("이메일 또는 비밀번호가 일치하지 않습니다."));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new RuntimeException("이메일 또는 비밀번호가 일치하지 않습니다.");
@@ -47,13 +50,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(Long id) {
-        return userRepository.findById(id)
+        return userRepository
+                .findById(id)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
     }
 
     @Override
     public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
+        return userRepository
+                .findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
     }
 
@@ -64,8 +69,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(Long id, User user) {
-        User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        User existingUser =
+                userRepository
+                        .findById(id)
+                        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         existingUser.setUsername(user.getUsername());
         existingUser.setEmail(user.getEmail());

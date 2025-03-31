@@ -19,6 +19,6 @@
 - 설명 추가
 
 ## PR Checklist
-- [ ] gradlew.bat spotlessApply
+- [ ] ./gradlew spotlessApply
 - [ ] npx prettier -w **/*.html **/*.js **/*.css
 - [ ] 변경 사항에 대한 테스트를 했습니다.(버그 수정/기능에 대한 테스트).

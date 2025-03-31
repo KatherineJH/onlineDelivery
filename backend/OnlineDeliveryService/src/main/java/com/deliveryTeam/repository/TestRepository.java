@@ -1,4 +1,3 @@
 package com.deliveryTeam.repository;
 
-public class TestRepository {
-}
+public class TestRepository {}

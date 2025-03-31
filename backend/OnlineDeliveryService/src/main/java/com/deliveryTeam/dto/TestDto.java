@@ -1,4 +1,3 @@
 package com.deliveryTeam.dto;
 
-public class TestDto {
-}
+public class TestDto {}

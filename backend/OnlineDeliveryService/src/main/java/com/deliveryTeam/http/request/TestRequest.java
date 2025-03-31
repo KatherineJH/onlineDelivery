@@ -1,4 +1,3 @@
 package com.deliveryTeam.http.request;
 
-public class TestRequest {
-}
+public class TestRequest {}

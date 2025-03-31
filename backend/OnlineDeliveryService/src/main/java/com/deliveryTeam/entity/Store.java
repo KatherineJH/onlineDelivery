@@ -1,10 +1,10 @@
 package com.deliveryTeam.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Getter
@@ -16,7 +16,7 @@ public class Store {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long storeId;
-    
+
     private String name;
     private String location;
 

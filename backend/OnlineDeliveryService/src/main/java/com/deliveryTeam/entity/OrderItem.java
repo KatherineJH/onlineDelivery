@@ -1,9 +1,9 @@
 package com.deliveryTeam.entity;
 
+import java.math.BigDecimal;
+
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.math.BigDecimal;
 
 @Entity
 @Getter

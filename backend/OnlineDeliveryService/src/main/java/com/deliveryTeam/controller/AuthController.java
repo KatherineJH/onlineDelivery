@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.deliveryTeam.entity.User;
 import com.deliveryTeam.repository.UserRepository;
-import com.deliveryTeam.service.user.UserService;
+import com.deliveryTeam.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 

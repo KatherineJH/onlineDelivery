@@ -1,0 +1,12 @@
+package com.deliveryTeam.service.serviceImpl;
+
+
+import com.deliveryTeam.service.CategoryService;
+import org.springframework.stereotype.Service;
+
+@Service
+
+public class CategoryServiceImpl implements CategoryService {
+
+
+}

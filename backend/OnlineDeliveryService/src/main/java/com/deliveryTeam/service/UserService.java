@@ -1,4 +1,4 @@
-package com.deliveryTeam.service.user;
+package com.deliveryTeam.service;
 
 import java.util.List;
 

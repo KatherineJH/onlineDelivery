@@ -33,7 +33,10 @@ public class WebappConfig {
                                 management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         Authorize ->
-                                Authorize.requestMatchers("/api/auth/**")
+                                Authorize.requestMatchers(
+                                                "/api/auth/**",
+                                                "/api/products/**",
+                                                "/api/categories/**")
                                         .permitAll()
                                         .requestMatchers("/api/admin/**")
                                         .hasAnyRole("RESTAURANT_OWNER", "ADMIN")

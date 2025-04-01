@@ -2,7 +2,6 @@ package com.deliveryTeam.service.serviceImpl;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -10,22 +9,20 @@ import org.springframework.transaction.annotation.Transactional;
 import com.deliveryTeam.entity.OrderEntity;
 import com.deliveryTeam.entity.User;
 import com.deliveryTeam.repository.UserRepository;
+import com.deliveryTeam.service.CartService;
 import com.deliveryTeam.service.UserService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CartService cartService;
 
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    // 새 유저 등록
     @Override
     public User registerUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
@@ -33,10 +30,16 @@ public class UserServiceImpl implements UserService {
         }
         // 비밀번호 암호화
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepository.save(user);
+
+        // 사용자 저장
+        User savedUser = userRepository.save(user);
+
+        // 장바구니 생성
+        cartService.createCart(savedUser.getUserId());
+
+        return savedUser;
     }
 
-    // 이메일, 비밀번호로 로그인
     @Override
     public User login(String email, String password) {
         User user =

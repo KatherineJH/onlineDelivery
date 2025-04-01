@@ -1,8 +1,8 @@
 package com.deliveryTeam.service;
 
-import com.deliveryTeam.entity.Product;
-
 import java.util.List;
+
+import com.deliveryTeam.entity.Product;
 
 public interface ProductService {
     // product id로 검색
@@ -12,7 +12,7 @@ public interface ProductService {
     // 키워드로 검색
     List<Product> findByNameContaining(String name);
 
-    //카테고리로 검색
+    // 카테고리로 검색
     List<Product> findByCategoryCategoryId(Long categoryId);
 
     // 전체 조회

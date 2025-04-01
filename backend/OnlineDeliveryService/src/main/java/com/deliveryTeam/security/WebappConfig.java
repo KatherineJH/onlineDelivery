@@ -1,6 +1,9 @@
 package com.deliveryTeam.security;
 
-import jakarta.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,9 +16,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Configuration
 public class WebappConfig {
@@ -26,14 +27,21 @@ public class WebappConfig {
     }
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(Authorize -> Authorize
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_OWNER", "ADMIN")
-                        .requestMatchers("/api/**").authenticated()
-                        .anyRequest().permitAll()
-                ).addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
+    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http.sessionManagement(
+                        management ->
+                                management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(
+                        Authorize ->
+                                Authorize.requestMatchers("/api/auth/**")
+                                        .permitAll()
+                                        .requestMatchers("/api/admin/**")
+                                        .hasAnyRole("RESTAURANT_OWNER", "ADMIN")
+                                        .requestMatchers("/api/**")
+                                        .authenticated()
+                                        .anyRequest()
+                                        .permitAll())
+                .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
         return http.build();
@@ -44,9 +52,7 @@ public class WebappConfig {
             @Override
             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                 CorsConfiguration corsConfig = new CorsConfiguration();
-                corsConfig.setAllowedOrigins(Arrays.asList(
-                        "http://localhost:5173"
-                ));
+                corsConfig.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
                 corsConfig.setAllowedMethods(Collections.singletonList("*"));
                 corsConfig.setAllowCredentials(true);
                 corsConfig.setAllowedHeaders(Collections.singletonList("*"));

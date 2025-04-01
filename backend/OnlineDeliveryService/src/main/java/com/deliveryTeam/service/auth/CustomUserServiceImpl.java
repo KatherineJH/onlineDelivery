@@ -1,13 +1,14 @@
 package com.deliveryTeam.service.auth;
 
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
 import com.deliveryTeam.entity.User;
 import com.deliveryTeam.repository.UserRepository;
 import com.deliveryTeam.security.JwtProvider;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
-
 
 @Service
 @RequiredArgsConstructor
@@ -28,4 +29,3 @@ public class CustomUserServiceImpl implements CustomUserService {
         return userOptional.orElseThrow(() -> new Exception("User not found with email: " + email));
     }
 }
-

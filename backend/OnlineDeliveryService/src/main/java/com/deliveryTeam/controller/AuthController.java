@@ -1,9 +1,7 @@
 package com.deliveryTeam.controller;
 
-import com.deliveryTeam.entity.USER_ROLE;
-import com.deliveryTeam.http.response.Response;
-import com.deliveryTeam.security.JwtProvider;
-import com.deliveryTeam.service.auth.CustomUserDetailsService;
+import java.util.Collection;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,15 +13,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import com.deliveryTeam.entity.USER_ROLE;
 import com.deliveryTeam.entity.User;
 import com.deliveryTeam.http.request.ChangePasswordRequest;
 import com.deliveryTeam.http.request.LoginRequest;
+import com.deliveryTeam.http.response.Response;
 import com.deliveryTeam.repository.UserRepository;
+import com.deliveryTeam.security.JwtProvider;
 import com.deliveryTeam.service.UserService;
+import com.deliveryTeam.service.auth.CustomUserDetailsService;
 
 import lombok.RequiredArgsConstructor;
-
-import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -49,26 +49,29 @@ public class AuthController {
     }
 
     // 로그인
-//    @PostMapping("/login")
-//    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-//        try {
-//            User user = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
-//            return ResponseEntity.ok(user);
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: " + e.getMessage());
-//        }
-//    }
+    //    @PostMapping("/login")
+    //    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    //        try {
+    //            User user = userService.login(loginRequest.getEmail(),
+    // loginRequest.getPassword());
+    //            return ResponseEntity.ok(user);
+    //        } catch (RuntimeException e) {
+    //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: " +
+    // e.getMessage());
+    //        }
+    //    }
     @PostMapping("/login")
-    public ResponseEntity<Response> login(@RequestBody LoginRequest req){
+    public ResponseEntity<Response> login(@RequestBody LoginRequest req) {
         String username = req.getEmail();
         String password = req.getPassword();
 
-        // loadUserByUsername(), UsernamePasswordAuthenticationToken() 를 통해 authentication(Principal, Credentials, Authorities)를 얻음
+        // loadUserByUsername(), UsernamePasswordAuthenticationToken() 를 통해
+        // authentication(Principal, Credentials, Authorities)를 얻음
         Authentication authentication = authenticate(username, password);
 
         // get authorities
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        String role = authorities.isEmpty()? null : authorities.iterator().next().getAuthority();
+        String role = authorities.isEmpty() ? null : authorities.iterator().next().getAuthority();
 
         // generate token
         String jwt = jwtProvider.generateToken(authentication);
@@ -139,13 +142,14 @@ public class AuthController {
     private Authentication authenticate(String username, String password) {
         UserDetails userDetails = customerUserDetailsService.loadUserByUsername(username);
 
-        if(userDetails==null){
+        if (userDetails == null) {
             throw new BadCredentialsException("Invalid username or password");
         }
-        if(!passwordEncoder.matches(password, userDetails.getPassword())){
+        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
             throw new BadCredentialsException("Invalid username or password");
         }
         // Principal (주체), Credentials(자격 증명), Authorities
-        return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
     }
 }

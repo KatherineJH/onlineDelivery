@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-OnlineDeliveryServiceApplication<OnlineDeliveryService>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.deliveryTeam.OnlineDeliveryServiceApplication",
+            "projectName": "OnlineDeliveryService",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

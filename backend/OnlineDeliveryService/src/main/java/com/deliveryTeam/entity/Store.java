@@ -20,10 +20,15 @@ public class Store {
     private String name;
     private String location;
 
+    private CUISINE_TYPE cuisineType;
+
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
 
     @OneToMany(mappedBy = "store")
     private List<Product> products = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "store")
+    private Address address;
 }

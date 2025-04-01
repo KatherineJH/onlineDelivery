@@ -31,12 +31,12 @@ public class Address {
             if (user == null) {
                 throw new IllegalArgumentException("Address must belong to a user.");
             }
-            store = null;  // store null로 설정
+            store = null; // store null로 설정
         } else if (addressType == AddressType.STORE) {
             if (store == null) {
                 throw new IllegalArgumentException("Address must belong to a store.");
             }
-            user = null;  // user null로 설정
+            user = null; // user null로 설정
         } else {
             throw new IllegalArgumentException("Address must belong to either a user or a store.");
         }
@@ -53,6 +53,7 @@ public class Address {
     private Store store;
 
     public enum AddressType {
-        USER, STORE
+        USER,
+        STORE
     }
 }

@@ -26,6 +26,5 @@ public class Product {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne
-    private Store store;
+    @ManyToOne private Store store;
 }

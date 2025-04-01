@@ -1,4 +1,4 @@
-package com.deliveryTeam.service.product;
+package com.deliveryTeam.service.serviceImpl;
 
 import java.util.List;
 
@@ -6,12 +6,13 @@ import org.springframework.stereotype.Service;
 
 import com.deliveryTeam.entity.Product;
 import com.deliveryTeam.repository.ProductRepository;
+import com.deliveryTeam.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class ProductService {
+public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
 

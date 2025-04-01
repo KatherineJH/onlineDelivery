@@ -3,6 +3,7 @@ package com.deliveryTeam.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,6 +20,10 @@ public class Category {
 
     private String name;
 
-    @OneToMany(mappedBy = "category")
-    private List<Product> products = new ArrayList<>();
+//    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)  // Category has multiple products
+//    private List<Product> products = new ArrayList<>();
+
+//    @JsonIgnore
+//    @ManyToOne
+//    private Store store;
 }

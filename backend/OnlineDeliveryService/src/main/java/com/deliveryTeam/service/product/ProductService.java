@@ -13,7 +13,6 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-
     // product id로 검색
     public Product getProductById(Long id) {
         return productRepository.findById(id)

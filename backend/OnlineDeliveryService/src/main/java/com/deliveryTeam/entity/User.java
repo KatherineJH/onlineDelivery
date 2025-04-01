@@ -26,4 +26,7 @@ public class User {
     private List<OrderEntity> orders = new ArrayList<>();
 
     private USER_ROLE role = USER_ROLE.ROLE_CUSTOMER;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    private Address address;
 }

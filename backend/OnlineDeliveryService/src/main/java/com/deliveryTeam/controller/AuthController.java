@@ -1,16 +1,27 @@
 package com.deliveryTeam.controller;
 
+import java.util.Collection;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import com.deliveryTeam.entity.USER_ROLE;
 import com.deliveryTeam.entity.User;
 import com.deliveryTeam.http.request.ChangePasswordRequest;
 import com.deliveryTeam.http.request.LoginRequest;
+import com.deliveryTeam.http.response.Response;
 import com.deliveryTeam.repository.UserRepository;
+import com.deliveryTeam.security.JwtProvider;
 import com.deliveryTeam.service.UserService;
+import com.deliveryTeam.service.auth.CustomUserDetailsService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,6 +32,10 @@ public class AuthController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
+    private final JwtProvider jwtProvider;
+    private final CustomUserDetailsService customerUserDetailsService;
 
     // 회원가입
     @PostMapping("/register")
@@ -34,14 +49,40 @@ public class AuthController {
     }
 
     // 로그인
+    //    @PostMapping("/login")
+    //    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    //        try {
+    //            User user = userService.login(loginRequest.getEmail(),
+    // loginRequest.getPassword());
+    //            return ResponseEntity.ok(user);
+    //        } catch (RuntimeException e) {
+    //            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: " +
+    // e.getMessage());
+    //        }
+    //    }
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        try {
-            User user = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
-            return ResponseEntity.ok(user);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 실패: " + e.getMessage());
-        }
+    public ResponseEntity<Response> login(@RequestBody LoginRequest req) {
+        String username = req.getEmail();
+        String password = req.getPassword();
+
+        // loadUserByUsername(), UsernamePasswordAuthenticationToken() 를 통해
+        // authentication(Principal, Credentials, Authorities)를 얻음
+        Authentication authentication = authenticate(username, password);
+
+        // get authorities
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        String role = authorities.isEmpty() ? null : authorities.iterator().next().getAuthority();
+
+        // generate token
+        String jwt = jwtProvider.generateToken(authentication);
+
+        // Response
+        Response authResponse = new Response();
+        authResponse.setJwt(jwt);
+        authResponse.setMessage("Login successful");
+        authResponse.setRole(USER_ROLE.valueOf(role));
+
+        return new ResponseEntity<>(authResponse, HttpStatus.OK);
     }
 
     // 로그아웃
@@ -96,5 +137,19 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("이메일 확인 중 오류가 발생했습니다.");
         }
+    }
+
+    private Authentication authenticate(String username, String password) {
+        UserDetails userDetails = customerUserDetailsService.loadUserByUsername(username);
+
+        if (userDetails == null) {
+            throw new BadCredentialsException("Invalid username or password");
+        }
+        if (!passwordEncoder.matches(password, userDetails.getPassword())) {
+            throw new BadCredentialsException("Invalid username or password");
+        }
+        // Principal (주체), Credentials(자격 증명), Authorities
+        return new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
     }
 }

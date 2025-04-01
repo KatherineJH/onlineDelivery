@@ -1,11 +1,13 @@
 package com.deliveryTeam.service.product;
 
-import com.deliveryTeam.entity.Product;
-import com.deliveryTeam.repository.ProductRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.deliveryTeam.entity.Product;
+import com.deliveryTeam.repository.ProductRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -13,10 +15,10 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-
     // product id로 검색
     public Product getProductById(Long id) {
-        return productRepository.findById(id)
+        return productRepository
+                .findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 상품이 존재하지 않습니다."));
     }
 
@@ -25,7 +27,7 @@ public class ProductService {
         return productRepository.findByNameContaining(name);
     }
 
-    //카테고리로 검색
+    // 카테고리로 검색
     public List<Product> findByCategoryCategoryId(Long categoryId) {
         return productRepository.findByCategoryCategoryId(categoryId);
     }
@@ -40,4 +42,3 @@ public class ProductService {
         return productRepository.save(product);
     }
 }
-

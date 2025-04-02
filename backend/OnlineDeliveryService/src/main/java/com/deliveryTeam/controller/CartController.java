@@ -1,11 +1,14 @@
 package com.deliveryTeam.controller;
 
-import java.util.stream.Collectors;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,9 +23,6 @@ import com.deliveryTeam.service.CartService;
 import com.deliveryTeam.service.UserService;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @RestController
 @RequestMapping("/api/cart")
@@ -45,9 +45,10 @@ public class CartController {
             CartResponse response = new CartResponse();
             response.setCartId(cart.getCartId());
             response.setTotalPrice(cart.getTotalPrice());
-            response.setItems(cart.getCartItems().stream()
-                    .map(this::convertToCartItemResponse)
-                    .collect(Collectors.toList()));
+            response.setItems(
+                    cart.getCartItems().stream()
+                            .map(this::convertToCartItemResponse)
+                            .collect(Collectors.toList()));
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -63,8 +64,9 @@ public class CartController {
             String email = authentication.getName();
             User user = userService.getUserByEmail(email);
 
-            CartItem cartItem = cartService.addItemToCart(user.getUserId(), request.getProductId(),
-                    request.getQuantity());
+            CartItem cartItem =
+                    cartService.addItemToCart(
+                            user.getUserId(), request.getProductId(), request.getQuantity());
             return ResponseEntity.ok(convertToCartItemResponse(cartItem));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -73,7 +75,8 @@ public class CartController {
 
     // 장바구니 아이템 삭제
     @DeleteMapping("/items/{cartItemId}")
-    public ResponseEntity<Void> removeItemFromCart(@PathVariable(name = "cartItemId") Long cartItemId) {
+    public ResponseEntity<Void> removeItemFromCart(
+            @PathVariable(name = "cartItemId") Long cartItemId) {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String email = authentication.getName();
@@ -93,14 +96,23 @@ public class CartController {
             @RequestBody Map<String, Integer> request,
             @AuthenticationPrincipal String email) {
         try {
-            logger.info("장바구니 상품 수량 변경 시도 - 사용자: {}, 상품ID: {}, 수량: {}", email, cartItemId, request.get("quantity"));
-            User user = userService.getUserByEmail(email);
-            CartItem updatedItem = cartService.updateCartItemQuantity(user.getUserId(), cartItemId,
+            logger.info(
+                    "장바구니 상품 수량 변경 시도 - 사용자: {}, 상품ID: {}, 수량: {}",
+                    email,
+                    cartItemId,
                     request.get("quantity"));
+            User user = userService.getUserByEmail(email);
+            CartItem updatedItem =
+                    cartService.updateCartItemQuantity(
+                            user.getUserId(), cartItemId, request.get("quantity"));
             logger.info("장바구니 상품 수량 변경 성공 - 사용자: {}, 상품ID: {}", email, cartItemId);
             return ResponseEntity.ok(updatedItem);
         } catch (Exception e) {
-            logger.error("장바구니 상품 수량 변경 실패 - 사용자: {}, 상품ID: {}, 오류: {}", email, cartItemId, e.getMessage());
+            logger.error(
+                    "장바구니 상품 수량 변경 실패 - 사용자: {}, 상품ID: {}, 오류: {}",
+                    email,
+                    cartItemId,
+                    e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }

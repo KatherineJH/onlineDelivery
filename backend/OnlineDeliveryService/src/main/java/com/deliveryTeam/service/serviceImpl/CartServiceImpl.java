@@ -40,9 +40,10 @@ public class CartServiceImpl implements CartService {
     // 사용자에게 장바구니 생성 - 회원가입 후 자동실행
     @Override
     public Cart createCart(Long userId) {
-        User user = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        User user =
+                userRepository
+                        .findById(userId)
+                        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         Cart cart = new Cart();
         cart.setUser(user);
@@ -61,15 +62,17 @@ public class CartServiceImpl implements CartService {
     @Override
     public CartItem addItemToCart(Long userId, Long productId, int quantity) {
         Cart cart = getCartByUserId(userId);
-        Product product = productRepository
-                .findById(productId)
-                .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
+        Product product =
+                productRepository
+                        .findById(productId)
+                        .orElseThrow(() -> new RuntimeException("상품을 찾을 수 없습니다."));
 
         // 장바구니에 같은 상품이 있는지 확인
-        CartItem existingCartItem = cart.getCartItems().stream()
-                .filter(item -> item.getProduct().getProductId().equals(productId))
-                .findFirst()
-                .orElse(null);
+        CartItem existingCartItem =
+                cart.getCartItems().stream()
+                        .filter(item -> item.getProduct().getProductId().equals(productId))
+                        .findFirst()
+                        .orElse(null);
 
         if (existingCartItem != null) {
             // 기존 상품이 있으면 수량만 증가
@@ -96,13 +99,16 @@ public class CartServiceImpl implements CartService {
         Cart cart = getCartByUserId(userId);
         logger.debug("사용자의 장바구니 조회 완료 - 장바구니ID: {}", cart.getCartId());
 
-        cart.getCartItems().removeIf(item -> {
-            if (item.getCartItemId().equals(cartItemId)) {
-                logger.debug("삭제할 장바구니 상품 찾음 - 상품명: {}", item.getProduct().getName());
-                return true;
-            }
-            return false;
-        });
+        cart.getCartItems()
+                .removeIf(
+                        item -> {
+                            if (item.getCartItemId().equals(cartItemId)) {
+                                logger.debug(
+                                        "삭제할 장바구니 상품 찾음 - 상품명: {}", item.getProduct().getName());
+                                return true;
+                            }
+                            return false;
+                        });
 
         cart.updateTotalPrice();
         cartRepository.save(cart);
@@ -119,15 +125,23 @@ public class CartServiceImpl implements CartService {
         Cart cart = getCartByUserId(userId);
         logger.debug("사용자의 장바구니 조회 완료 - 장바구니ID: {}", cart.getCartId());
 
-        CartItem cartItem = cart.getCartItems().stream()
-                .filter(item -> item.getCartItemId().equals(cartItemId))
-                .findFirst()
-                .orElseThrow(() -> {
-                    logger.error("장바구니 상품을 찾을 수 없음 - 사용자ID: {}, 상품ID: {}", userId, cartItemId);
-                    return new RuntimeException("Cart item not found");
-                });
+        CartItem cartItem =
+                cart.getCartItems().stream()
+                        .filter(item -> item.getCartItemId().equals(cartItemId))
+                        .findFirst()
+                        .orElseThrow(
+                                () -> {
+                                    logger.error(
+                                            "장바구니 상품을 찾을 수 없음 - 사용자ID: {}, 상품ID: {}",
+                                            userId,
+                                            cartItemId);
+                                    return new RuntimeException("Cart item not found");
+                                });
 
-        logger.debug("장바구니 상품 찾음 - 상품명: {}, 현재수량: {}", cartItem.getProduct().getName(), cartItem.getQuantity());
+        logger.debug(
+                "장바구니 상품 찾음 - 상품명: {}, 현재수량: {}",
+                cartItem.getProduct().getName(),
+                cartItem.getQuantity());
 
         cartItem.setQuantity(quantity);
         cart.updateTotalPrice();

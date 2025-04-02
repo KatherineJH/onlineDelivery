@@ -1,6 +1,9 @@
 package com.deliveryTeam.controller;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,21 +11,25 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import com.deliveryTeam.entity.Cart;
 import com.deliveryTeam.entity.USER_ROLE;
 import com.deliveryTeam.entity.User;
 import com.deliveryTeam.http.request.ChangePasswordRequest;
 import com.deliveryTeam.http.request.LoginRequest;
 import com.deliveryTeam.http.response.Response;
+import com.deliveryTeam.repository.CartRepository;
 import com.deliveryTeam.repository.UserRepository;
 import com.deliveryTeam.security.JwtProvider;
 import com.deliveryTeam.service.UserService;
 import com.deliveryTeam.service.auth.CustomUserDetailsService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -32,6 +39,7 @@ public class AuthController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final CartRepository cartRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
@@ -39,13 +47,46 @@ public class AuthController {
 
     // 회원가입
     @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) throws Exception {
-        try {
-            User registeredUser = userService.registerUser(user);
-            return new ResponseEntity<>(registeredUser, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Response> registerUser(@Valid @RequestBody User user) throws Exception {
+
+        String email = user.getEmail();
+        String password = user.getPassword();
+        String username = user.getUsername();
+        USER_ROLE role = user.getRole();
+
+        Optional<User> isEmailExist = userRepository.findByEmail(email);
+
+        if (isEmailExist.isPresent()) {
+            throw new Exception("Email Is Already Used With Another Account");
         }
+
+        User createdUser = new User();
+        createdUser.setEmail(email);
+        createdUser.setUsername(username);
+        createdUser.setPassword(passwordEncoder.encode(password));
+        createdUser.setRole(role);
+
+        User savedUser = userRepository.save(createdUser);
+
+        Cart cart = new Cart();
+        cart.setUser(savedUser);
+        Cart savedCart = cartRepository.save(cart);
+
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(new SimpleGrantedAuthority(role.toString()));
+
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(email, password, authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String token = jwtProvider.generateToken(authentication);
+
+        Response authResponse = new Response();
+        authResponse.setJwt(token);
+        authResponse.setMessage("Register Success");
+        authResponse.setRole(savedUser.getRole());
+
+        return new ResponseEntity<>(authResponse, HttpStatus.OK);
     }
 
     // 로그인

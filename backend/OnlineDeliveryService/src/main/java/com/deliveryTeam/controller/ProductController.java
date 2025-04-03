@@ -44,7 +44,7 @@ public class ProductController {
 
     // 상품 등록 (ADMIN, R-OWNER만 가능)
     @PreAuthorize("hasAnyRole('ADMIN', 'RESTAURANT_OWNER')")
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product saved = productService.save(product);
         return ResponseEntity.ok(saved);

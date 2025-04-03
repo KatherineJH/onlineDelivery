@@ -31,28 +31,45 @@ public class WebappConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.sessionManagement(
-                        management ->
-                                management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(
-                        Authorize ->
-                                Authorize.requestMatchers("/api/auth/**", "/api/categories/**")
-                                        .permitAll()
-                                        .requestMatchers(HttpMethod.GET, "/api/products/**")
-                                        .permitAll()
-                                        .requestMatchers(HttpMethod.POST, "/api/products")
-                                        .hasAnyRole("ADMIN", "RESTAURANT_OWNER")
-                                        .requestMatchers("/api/admin/**")
-                                        .hasAnyRole("RESTAURANT_OWNER", "ADMIN")
-                                        .requestMatchers("/api/**")
-                                        .authenticated()
-                                        .anyRequest()
-                                        .permitAll())
+        http.sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(Authorize ->
+                                //관리자+점주
+                        Authorize.requestMatchers(
+                                        HttpMethod.POST, "/api/products/create",
+                                        "/api/admin/**"
+                                ).hasAnyRole("ADMIN", "RESTAURANT_OWNER")
+
+                                //관리자
+                                .requestMatchers(
+                                        HttpMethod.POST, "/api/categories",
+                                        "/api/users/admin/**"
+                                ).hasRole("ADMIN")
+
+                                //로그인 유저만
+                                .requestMatchers(
+                                        "/api/users/me", "/api/users/me/**",
+                                        "/api/cart/**",
+                                        "/api/auth/logout",
+                                        "/api/auth/me",
+                                        "/api/auth/change-password"
+                                ).authenticated()
+
+                                //전체 허용(비로그인 포함)
+                                .requestMatchers(
+                                        "/api/auth/**",
+                                        "/api/products/**",
+                                        "/api/categories/**"
+                                ).permitAll()
+
+                                .anyRequest().permitAll()
+                )
+
                 .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));
-        return http.build();
-    }
+
+                return http.build();
+     }
 
     private CorsConfigurationSource corsConfigurationSource() {
         return new CorsConfigurationSource() {

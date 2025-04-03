@@ -36,14 +36,12 @@ public class WebappConfig {
                                 management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         Authorize ->
-                                Authorize.requestMatchers(
-                                                "/api/auth/**",
-                                                "/api/categories/**")
+                                Authorize.requestMatchers("/api/auth/**", "/api/categories/**")
                                         .permitAll()
                                         .requestMatchers(HttpMethod.GET, "/api/products/**")
                                         .permitAll()
                                         .requestMatchers(HttpMethod.POST, "/api/products")
-                                        .hasAnyRole("ADMIN","RESTAURANT_OWNER")
+                                        .hasAnyRole("ADMIN", "RESTAURANT_OWNER")
                                         .requestMatchers("/api/admin/**")
                                         .hasAnyRole("RESTAURANT_OWNER", "ADMIN")
                                         .requestMatchers("/api/**")

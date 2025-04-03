@@ -4,6 +4,7 @@ import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { topMeals } from "./topMeals";
 import CarouselItem from "./CarouselItem";
+import "./Home.css"; 
 
 const MultiItemCarousel = () => {
     const settings = {

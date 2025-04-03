@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,6 +21,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Configuration
+@EnableMethodSecurity
 public class WebappConfig {
 
     @Bean
@@ -35,9 +38,12 @@ public class WebappConfig {
                         Authorize ->
                                 Authorize.requestMatchers(
                                                 "/api/auth/**",
-                                                "/api/products/**",
                                                 "/api/categories/**")
                                         .permitAll()
+                                        .requestMatchers(HttpMethod.GET, "/api/products/**")
+                                        .permitAll()
+                                        .requestMatchers(HttpMethod.POST, "/api/products")
+                                        .hasAnyRole("ADMIN","RESTAURANT_OWNER")
                                         .requestMatchers("/api/admin/**")
                                         .hasAnyRole("RESTAURANT_OWNER", "ADMIN")
                                         .requestMatchers("/api/**")

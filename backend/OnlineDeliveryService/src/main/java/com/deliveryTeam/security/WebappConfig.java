@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -38,7 +39,8 @@ public class WebappConfig {
                                         .requestMatchers(
                                                 "/api/auth/**", // 로그인, 회원가입 등
                                                 "/api/products/**", // 음식 목록, 음식 상세
-                                                "/api/categories/**" // 음식 카테고리
+                                                "/api/categories/**", // 음식 카테고리
+                                                "/predict", "/predict/**" // 👉 까먹지 말고 나중에 지우자 꼭
                                                 )
                                         .permitAll()
                                         // ✅ 관리자 또는 음식점 점주만 접근 가능한 관리자 API
@@ -75,5 +77,10 @@ public class WebappConfig {
                 return corsConfig;
             }
         };
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

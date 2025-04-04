@@ -1,0 +1,54 @@
+# Python bytecode files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment folders
+venv/
+env/
+.venv/
+ENV/
+.ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VSCode workspace settings
+.vscode/
+
+# Windows thumbnail cache
+Thumbs.db
+
+# Python packaging
+*.egg
+*.egg-info
+dist/
+build/
+*.manifest
+*.spec
+
+# Log files
+*.log
+
+# Test and coverage reports
+.coverage
+*.cover
+nosetests.xml
+coverage.xml
+*.hypothesis/
+
+# Pytest cache
+.cache/
+
+# Caches
+*.cache
+
+# Local environment variables
+.env
+.env.*
+
+# SQLite databases
+*.sqlite3
+
+*.csv

@@ -38,7 +38,9 @@ public class WebappConfig {
                                         .requestMatchers(
                                                 "/api/auth/**", // 로그인, 회원가입 등
                                                 "/api/products/**", // 음식 목록, 음식 상세
-                                                "/api/categories/**" // 음식 카테고리
+                                                "/api/categories/**", // 음식 카테고리
+                                                "api/stores/**" // 매장 목록, 매장 상세
+
                                                 )
                                         .permitAll()
                                         // ✅ 관리자 또는 음식점 점주만 접근 가능한 관리자 API

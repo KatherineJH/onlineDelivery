@@ -1,24 +1,44 @@
 package com.deliveryTeam.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Entity
+@Table(name = "addresses")
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity
 public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long addressId;
 
+    @Column(nullable = false)
     private String streetName;
+
+    @Column(nullable = false)
     private String city;
+
+    @Column(nullable = false)
     private String state;
+
+    @Column(nullable = false)
     private String zipCode;
+
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "store_id")
+    private Store store;
 
     @Enumerated(EnumType.STRING)
     private AddressType addressType;
@@ -41,16 +61,6 @@ public class Address {
             throw new IllegalArgumentException("Address must belong to either a user or a store.");
         }
     }
-
-    // 사용자와 연결 (USER 타입일 때만 연결)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    // 상점과 연결 (STORE 타입일 때만 연결)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id")
-    private Store store;
 
     public enum AddressType {
         USER,

@@ -24,6 +24,7 @@ public class Store {
 
     private CUISINE_TYPE cuisineType;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
@@ -32,6 +33,7 @@ public class Store {
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "store")
     private Address address;
 }

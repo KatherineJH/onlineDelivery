@@ -1,43 +1,63 @@
 package com.deliveryTeam.service.serviceImpl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.deliveryTeam.entity.Cart;
 import com.deliveryTeam.entity.OrderEntity;
+import com.deliveryTeam.entity.USER_ROLE;
 import com.deliveryTeam.entity.User;
+import com.deliveryTeam.repository.CartRepository;
 import com.deliveryTeam.repository.UserRepository;
-import com.deliveryTeam.service.CartService;
 import com.deliveryTeam.service.UserService;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final CartRepository cartRepository;
     private final PasswordEncoder passwordEncoder;
-    private final CartService cartService;
+    private final EntityManager entityManager;
 
     @Override
+    @Transactional
     public User registerUser(User user) {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("이미 존재하는 이메일입니다.");
         }
-        // 비밀번호 암호화
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // 사용자 저장
-        User savedUser = userRepository.save(user);
+        try {
+            // 비밀번호 암호화
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        // 장바구니 생성
-        cartService.createCart(savedUser.getUserId());
+            // 1. 장바구니 생성 (ROLE_CUSTOMER인 경우)
+            if (user.getRole() == USER_ROLE.ROLE_CUSTOMER) {
+                Cart cart = new Cart();
+                cart.setTotalPrice(BigDecimal.ZERO);
+                user.setCart(cart);
+                cart.setUser(user);
+            }
 
-        return savedUser;
+            // 2. 사용자와 장바구니 함께 저장 (CascadeType.ALL 덕분에 자동으로 처리됨)
+            User savedUser = userRepository.saveAndFlush(user);
+            entityManager.clear(); // 영속성 컨텍스트 초기화
+
+            // 3. 저장된 사용자 다시 조회
+            return userRepository
+                    .findById(savedUser.getUserId())
+                    .orElseThrow(() -> new RuntimeException("사용자 저장 실패"));
+
+        } catch (Exception e) {
+            throw new RuntimeException("사용자 등록 중 오류가 발생했습니다: " + e.getMessage());
+        }
     }
 
     @Override
@@ -54,7 +74,6 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    // ID로 유저 조회
     @Override
     public User getUserById(Long id) {
         return userRepository
@@ -62,7 +81,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
     }
 
-    // 이메일로 유저 조회
     @Override
     public User getUserByEmail(String email) {
         return userRepository
@@ -70,14 +88,13 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
     }
 
-    // 모든 유저 조회
     @Override
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    // 유저정보수정(비밀번호 변경도 가능능)
     @Override
+    @Transactional
     public User updateUser(Long id, User user) {
         User existingUser =
                 userRepository
@@ -94,8 +111,8 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(existingUser);
     }
 
-    // 유저 삭제
     @Override
+    @Transactional
     public void deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
             throw new RuntimeException("사용자를 찾을 수 없습니다.");
@@ -103,15 +120,14 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-    // 유저의 주문내역 조회
     @Override
     public List<OrderEntity> getUserOrders(Long userId) {
         User user = getUserById(userId);
         return user.getOrders();
     }
 
-    // 비밀번호 변경
     @Override
+    @Transactional
     public void changePassword(Long userId, String currentPassword, String newPassword) {
         User user = getUserById(userId);
 

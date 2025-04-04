@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -58,12 +58,14 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                 @SuppressWarnings("unchecked")
                 List<String> roles = claims.get("authorities", List.class);
 
-// 권한 리스트를 GrantedAuthority 객체로 변환
-                List<GrantedAuthority> auth = roles.stream()
-                        .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
-// 인증 객체 생성 및 SecurityContext에 등록
-                Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, auth);
+                // 권한 리스트를 GrantedAuthority 객체로 변환
+                List<GrantedAuthority> auth =
+                        roles.stream()
+                                .map(SimpleGrantedAuthority::new)
+                                .collect(Collectors.toList());
+                // 인증 객체 생성 및 SecurityContext에 등록
+                Authentication authentication =
+                        new UsernamePasswordAuthenticationToken(email, null, auth);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (Exception e) {
                 throw new BadCredentialsException("invalid token.......");

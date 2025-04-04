@@ -1,21 +1,22 @@
 package com.deliveryTeam.service.serviceImpl;
 
-import com.deliveryTeam.entity.Store;
-import com.deliveryTeam.entity.User;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.deliveryTeam.dto.StoreDTO;
 import com.deliveryTeam.entity.Address;
 import com.deliveryTeam.entity.CUISINE_TYPE;
-import com.deliveryTeam.dto.StoreDTO;
+import com.deliveryTeam.entity.Store;
+import com.deliveryTeam.entity.User;
 import com.deliveryTeam.repository.StoreRepository;
 import com.deliveryTeam.repository.UserRepository;
 import com.deliveryTeam.service.StoreService;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -28,8 +29,10 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public Store createStore(StoreDTO storeDTO, String ownerEmail) {
-        User owner = userRepository.findByEmail(ownerEmail)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        User owner =
+                userRepository
+                        .findByEmail(ownerEmail)
+                        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
 
         Store store = new Store();
         store.setName(storeDTO.getName());
@@ -77,7 +80,8 @@ public class StoreServiceImpl implements StoreService {
     @Override
     @Transactional(readOnly = true)
     public Store getStoreById(Long storeId) {
-        return storeRepository.findById(storeId)
+        return storeRepository
+                .findById(storeId)
                 .orElseThrow(() -> new RuntimeException("매장을 찾을 수 없습니다."));
     }
 
@@ -90,8 +94,10 @@ public class StoreServiceImpl implements StoreService {
     @Override
     @Transactional(readOnly = true)
     public List<Store> getStoresByOwner(String ownerEmail) {
-        User owner = userRepository.findByEmail(ownerEmail)
-                .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
+        User owner =
+                userRepository
+                        .findByEmail(ownerEmail)
+                        .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
         return storeRepository.findByOwner(owner);
     }
 

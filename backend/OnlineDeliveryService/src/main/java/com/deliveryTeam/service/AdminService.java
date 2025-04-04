@@ -1,7 +1,7 @@
 package com.deliveryTeam.service;
 
-import com.deliveryTeam.dto.ProductDto;
 import com.deliveryTeam.dto.OrderStatusDto;
+import com.deliveryTeam.dto.ProductDto;
 
 public interface AdminService {
 

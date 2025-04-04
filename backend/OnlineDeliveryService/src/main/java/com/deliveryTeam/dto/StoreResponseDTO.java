@@ -2,6 +2,7 @@ package com.deliveryTeam.dto;
 
 import com.deliveryTeam.entity.CUISINE_TYPE;
 import com.deliveryTeam.entity.Store;
+
 import lombok.Getter;
 import lombok.Setter;
 

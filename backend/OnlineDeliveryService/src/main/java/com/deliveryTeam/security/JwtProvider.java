@@ -25,9 +25,10 @@ public class JwtProvider {
     public String generateToken(Authentication auth) {
         // Authentication 객체에서 권한 정보를 추출
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
-        List<String> roles = authorities.stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+        List<String> roles =
+                authorities.stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList());
 
         // JWT를 생성하여 반환
         return Jwts.builder()

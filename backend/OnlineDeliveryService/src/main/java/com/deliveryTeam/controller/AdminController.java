@@ -1,12 +1,14 @@
 package com.deliveryTeam.controller;
 
-import com.deliveryTeam.dto.ProductDto;
-import com.deliveryTeam.dto.OrderStatusDto;
-import com.deliveryTeam.service.AdminService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.deliveryTeam.dto.OrderStatusDto;
+import com.deliveryTeam.dto.ProductDto;
+import com.deliveryTeam.service.AdminService;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/admin")
@@ -29,7 +31,8 @@ public class AdminController {
 
     // 상품 수정
     @PutMapping("/products/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductDto productDto) {
+    public ResponseEntity<?> updateProduct(
+            @PathVariable Long id, @RequestBody @Valid ProductDto productDto) {
         return ResponseEntity.ok(adminService.updateProduct(id, productDto));
     }
 
@@ -48,7 +51,8 @@ public class AdminController {
 
     //  주문 상태 변경
     @PutMapping("/orders/{id}/status")
-    public ResponseEntity<?> updateOrderStatus(@PathVariable Long id, @RequestBody OrderStatusDto dto) {
+    public ResponseEntity<?> updateOrderStatus(
+            @PathVariable Long id, @RequestBody OrderStatusDto dto) {
         return ResponseEntity.ok(adminService.updateOrderStatus(id, dto));
     }
 

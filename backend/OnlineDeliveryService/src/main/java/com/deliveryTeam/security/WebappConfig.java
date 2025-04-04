@@ -33,17 +33,28 @@ public class WebappConfig {
                                 management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(
                         Authorize ->
-                                Authorize.requestMatchers(
-                                                "/api/auth/**",
-                                                "/api/products/**",
-                                                "/api/categories/**")
+                                Authorize
+                                        // ✅ 누구나 접근 가능한 공개 API (비로그인 사용자도 허용)
+                                        .requestMatchers(
+                                                "/api/auth/**", // 로그인, 회원가입 등
+                                                "/api/products/**", // 음식 목록, 음식 상세
+                                                "/api/categories/**" // 음식 카테고리
+                                                )
                                         .permitAll()
+                                        // ✅ 관리자 또는 음식점 점주만 접근 가능한 관리자 API
                                         .requestMatchers("/api/admin/**")
                                         .hasAnyRole("RESTAURANT_OWNER", "ADMIN")
-                                        .requestMatchers("/api/**")
-                                        .authenticated()
+                                        // ✅ 로그인한 일반 사용자(고객)만 접근 가능한 API
+                                        .requestMatchers(
+                                                "/api/user/**", // 내 프로필 조회/수정
+                                                "/api/orders/**", // 주문 생성, 주문 내역
+                                                "/api/cart/**", // 장바구니 관리
+                                                "/api/payments/**" // 결제
+                                                )
+                                        .hasRole("CUSTOMER")
+                                        // ✅ 그 외 모든 요청은 로그인만 되어 있으면 허용
                                         .anyRequest()
-                                        .permitAll())
+                                        .authenticated())
                 .addFilterBefore(new JwtTokenValidator(), BasicAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()));

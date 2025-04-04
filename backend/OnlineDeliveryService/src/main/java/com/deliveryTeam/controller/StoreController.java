@@ -76,6 +76,16 @@ class StoreManagementController {
         return ResponseEntity.ok(StoreResponseDTO.from(store));
     }
 
+    /** 내 매장 목록 조회 (점주 전용) */
+    @GetMapping("/stores/my-stores")
+    public ResponseEntity<List<StoreResponseDTO>> getMyStores(
+            @AuthenticationPrincipal String ownerEmail) {
+        List<Store> stores = storeService.getStoresByOwner(ownerEmail);
+        List<StoreResponseDTO> response =
+                stores.stream().map(StoreResponseDTO::from).collect(Collectors.toList());
+        return ResponseEntity.ok(response);
+    }
+
     /** 매장 정보 수정 (점주 전용) */
     @PutMapping("/stores/{storeId}")
     public ResponseEntity<StoreResponseDTO> updateStore(
@@ -95,13 +105,5 @@ class StoreManagementController {
         return ResponseEntity.noContent().build();
     }
 
-    /** 내 매장 목록 조회 (점주 전용) */
-    @GetMapping("/stores/my-stores")
-    public ResponseEntity<List<StoreResponseDTO>> getMyStores(
-            @AuthenticationPrincipal String ownerEmail) {
-        List<Store> stores = storeService.getStoresByOwner(ownerEmail);
-        List<StoreResponseDTO> response =
-                stores.stream().map(StoreResponseDTO::from).collect(Collectors.toList());
-        return ResponseEntity.ok(response);
-    }
+
 }

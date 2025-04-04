@@ -104,7 +104,7 @@ public class AdminServiceImpl implements AdminService {
                         .findById(id)
                         .orElseThrow(() -> new RuntimeException("주문을 찾을 수 없습니다."));
 
-        order.setStatus(dto.getStatus());
+        order.setStatus(OrderEntity.OrderStatus.valueOf(dto.getStatus().toUpperCase()));
         return orderRepository.save(order);
     }
 

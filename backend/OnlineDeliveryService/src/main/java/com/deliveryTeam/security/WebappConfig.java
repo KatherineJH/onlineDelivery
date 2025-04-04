@@ -45,7 +45,7 @@ public class WebappConfig {
                                         .permitAll()
                                         // ✅ 관리자 또는 음식점 점주만 접근 가능한 관리자 API
                                         .requestMatchers("/api/admin/**")
-                                        .hasAnyRole("RESTAURANT_OWNER", "ADMIN")
+                                        .hasAnyAuthority("ROLE_RESTAURANT_OWNER", "ROLE_ADMIN")
                                         // ✅ 로그인한 일반 사용자(고객)만 접근 가능한 API
                                         .requestMatchers(
                                                 "/api/user/**", // 내 프로필 조회/수정

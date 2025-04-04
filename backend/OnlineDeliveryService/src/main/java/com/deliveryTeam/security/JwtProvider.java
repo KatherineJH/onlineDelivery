@@ -1,9 +1,7 @@
 package com.deliveryTeam.security;
 
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
@@ -27,7 +25,9 @@ public class JwtProvider {
     public String generateToken(Authentication auth) {
         // Authentication 객체에서 권한 정보를 추출
         Collection<? extends GrantedAuthority> authorities = auth.getAuthorities();
-        String roles = populateAuthorities(authorities);
+        List<String> roles = authorities.stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
 
         // JWT를 생성하여 반환
         return Jwts.builder()

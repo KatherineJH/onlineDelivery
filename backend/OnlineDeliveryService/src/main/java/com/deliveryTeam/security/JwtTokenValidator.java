@@ -2,14 +2,15 @@ package com.deliveryTeam.security;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -52,17 +53,17 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                                 .build()
                                 .parseSignedClaims(jwt)
                                 .getPayload();
-                // JWT에서 이메일 및 권한 정보 가져오기
+                // JWT에서 이메일 및 권한 리스트 추출
                 String email = String.valueOf(claims.get("email"));
-                String authorities = String.valueOf(claims.get("authorities"));
+                @SuppressWarnings("unchecked")
+                List<String> roles = claims.get("authorities", List.class);
 
-                List<GrantedAuthority> auth =
-                        AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
-                // Authentication 객체 생성
-                Authentication authentication =
-                        new UsernamePasswordAuthenticationToken(
-                                email, null, auth); // null -> 비밀번호는 JWT 인증에서는 필요하지 않음
-                // authenticated user set in SecurityContext
+// 권한 리스트를 GrantedAuthority 객체로 변환
+                List<GrantedAuthority> auth = roles.stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList());
+// 인증 객체 생성 및 SecurityContext에 등록
+                Authentication authentication = new UsernamePasswordAuthenticationToken(email, null, auth);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (Exception e) {
                 throw new BadCredentialsException("invalid token.......");

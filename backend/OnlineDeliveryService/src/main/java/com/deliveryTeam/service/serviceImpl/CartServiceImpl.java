@@ -52,9 +52,10 @@ public class CartServiceImpl implements CartService {
 
     // 유저 아이디로 장바구니 조회
     @Override
+    @Transactional(readOnly = true)
     public Cart getCartByUserId(Long userId) {
         return cartRepository
-                .findByUser_UserId(userId)
+                .findByUserUserId(userId)
                 .orElseThrow(() -> new RuntimeException("장바구니를 찾을 수 없습니다."));
     }
 
@@ -155,7 +156,8 @@ public class CartServiceImpl implements CartService {
     @Override
     public void clearCart(Long userId) {
         Cart cart = getCartByUserId(userId);
-        cartItemRepository.deleteAllByCartCartId(cart.getCartId());
+        cart.clearItems();
+        cartRepository.save(cart);
     }
 
     // 장바구니 아이템 기반으로 주문을 생성
@@ -171,7 +173,7 @@ public class CartServiceImpl implements CartService {
         // 주문 생성
         OrderEntity order = new OrderEntity();
         order.setUser(cart.getUser());
-        order.setStatus("PENDING");
+        order.setStatus(OrderEntity.OrderStatus.PENDING);
         order = orderRepository.save(order);
 
         // 주문 아이템 생성

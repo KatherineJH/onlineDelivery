@@ -42,7 +42,7 @@ public class ProductController {
     }
 
     // 상품 등록
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
         Product saved = productService.save(product);
         return ResponseEntity.ok(saved);

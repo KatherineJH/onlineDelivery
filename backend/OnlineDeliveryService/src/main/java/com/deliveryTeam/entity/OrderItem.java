@@ -2,6 +2,9 @@ package com.deliveryTeam.entity;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,6 +13,7 @@ import lombok.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class OrderItem {
 
     @Id
@@ -18,6 +22,7 @@ public class OrderItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
+    @JsonBackReference
     private OrderEntity order;
 
     @ManyToOne(fetch = FetchType.LAZY)

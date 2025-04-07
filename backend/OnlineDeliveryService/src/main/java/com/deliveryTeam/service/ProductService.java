@@ -2,6 +2,7 @@ package com.deliveryTeam.service;
 
 import java.util.List;
 
+import com.deliveryTeam.dto.ProductDto;
 import com.deliveryTeam.entity.Product;
 
 public interface ProductService {
@@ -19,5 +20,5 @@ public interface ProductService {
     List<Product> findAll();
 
     // 등록
-    Product save(Product product);
+    Product createProductFromDto(ProductDto dto);
 }

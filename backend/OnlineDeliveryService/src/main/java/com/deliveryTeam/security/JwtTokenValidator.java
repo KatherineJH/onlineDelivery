@@ -32,8 +32,10 @@ public class JwtTokenValidator extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
+
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+            throws ServletException, IOException
+    {
 
         String jwt =
                 request.getHeader(
@@ -63,6 +65,9 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                         roles.stream()
                                 .map(SimpleGrantedAuthority::new)
                                 .collect(Collectors.toList());
+                System.out.println("JwtTokenValidator 실행됨");
+                System.out.println("이메일: " + email);
+                System.out.println("권한: " + roles);
                 // 인증 객체 생성 및 SecurityContext에 등록
                 Authentication authentication =
                         new UsernamePasswordAuthenticationToken(email, null, auth);

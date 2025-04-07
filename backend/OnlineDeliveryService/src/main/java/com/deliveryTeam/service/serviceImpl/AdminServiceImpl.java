@@ -32,7 +32,6 @@ public class AdminServiceImpl implements AdminService {
         return result;
     }
 
-    //    store 현재 미구현
     @Override
     public Object createProduct(ProductDto dto) {
         Product product = new Product();
@@ -110,6 +109,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public Object getAllUsers() {
+        System.out.println("getAllUsers 호출됨");
         return userRepository.findAll(); // or DTO 변환
     }
 }

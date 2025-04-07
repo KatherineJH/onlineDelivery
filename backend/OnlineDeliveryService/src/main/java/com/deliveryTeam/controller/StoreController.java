@@ -7,10 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import com.deliveryTeam.dto.StoreDTO;
-import com.deliveryTeam.dto.StoreResponseDTO;
 import com.deliveryTeam.entity.CUISINE_TYPE;
 import com.deliveryTeam.entity.Store;
+import com.deliveryTeam.http.request.StoreDTO;
+import com.deliveryTeam.http.response.StoreResponseDTO;
+
 import com.deliveryTeam.service.StoreService;
 
 import lombok.RequiredArgsConstructor;
@@ -41,6 +42,7 @@ public class StoreController {
     /** 음식 종류별 매장 조회 */
     @GetMapping("/api/stores/cuisine/{cuisineType}")
     public ResponseEntity<List<StoreResponseDTO>> getStoresByCuisineType(
+
             @PathVariable CUISINE_TYPE cuisineType) {
         List<Store> stores = storeService.getStoresByCuisineType(cuisineType);
         List<StoreResponseDTO> response =

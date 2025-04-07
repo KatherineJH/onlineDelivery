@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Table(name = "carts")
 @Getter
 @Setter
 public class Cart {
@@ -22,7 +23,7 @@ public class Cart {
 
     @JsonIgnore
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @JsonManagedReference
@@ -52,5 +53,9 @@ public class Cart {
                                                 .getPrice()
                                                 .multiply(new BigDecimal(item.getQuantity())))
                         .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public void clearItems() {
+        cartItems.clear();
     }
 }

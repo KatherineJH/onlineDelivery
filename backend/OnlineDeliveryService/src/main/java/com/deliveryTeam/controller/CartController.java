@@ -1,15 +1,9 @@
 package com.deliveryTeam.controller;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.deliveryTeam.entity.Cart;
@@ -24,6 +18,7 @@ import com.deliveryTeam.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
+/** 장바구니 관련 기능을 처리하는 컨트롤러 장바구니 조회, 상품 추가/수정/삭제, 주문 전환 등의 기능을 제공 */
 @RestController
 @RequestMapping("/api/cart")
 @RequiredArgsConstructor
@@ -31,130 +26,95 @@ public class CartController {
 
     private final CartService cartService;
     private final UserService userService;
-    private static final Logger logger = LoggerFactory.getLogger(CartController.class);
 
-    // 장바구니 조회
+    /**
+     * 현재 사용자의 장바구니 정보를 조회 장바구니에 담긴 상품 목록, 총 금액 등의 정보를 반환
+     *
+     * @return
+     */
     @GetMapping
-    public ResponseEntity<CartResponse> getCart() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String email = authentication.getName();
-            User user = userService.getUserByEmail(email);
+    public ResponseEntity<CartResponse> getCart(Authentication authentication) {
+        User user = userService.getUserByEmail(authentication.getName());
+        Cart cart = cartService.getCartByUserId(user.getUserId());
 
-            Cart cart = cartService.getCartByUserId(user.getUserId());
-            CartResponse response = new CartResponse();
-            response.setCartId(cart.getCartId());
-            response.setTotalPrice(cart.getTotalPrice());
-            response.setItems(
-                    cart.getCartItems().stream()
-                            .map(this::convertToCartItemResponse)
-                            .collect(Collectors.toList()));
-
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        return ResponseEntity.ok(CartResponse.from(cart));
     }
 
-    // 장바구니에 상품추가
+    /**
+     * 장바구니에 상품을 추가
+     *
+     * @param request
+     * @return
+     */
     @PostMapping("/items")
-    public ResponseEntity<CartItemResponse> addItemToCart(@RequestBody AddCartItemRequest request) {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String email = authentication.getName();
-            User user = userService.getUserByEmail(email);
+    public ResponseEntity<CartItemResponse> addItemToCart(
+            @RequestBody AddCartItemRequest request, Authentication authentication) {
+        User user = userService.getUserByEmail(authentication.getName());
+        CartItem cartItem =
+                cartService.addItemToCart(
+                        user.getUserId(), request.getProductId(), request.getQuantity());
 
-            CartItem cartItem =
-                    cartService.addItemToCart(
-                            user.getUserId(), request.getProductId(), request.getQuantity());
-            return ResponseEntity.ok(convertToCartItemResponse(cartItem));
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        return ResponseEntity.ok(CartItemResponse.from(cartItem));
     }
 
-    // 장바구니 아이템 삭제
+    /**
+     * 장바구니에서 특정 상품을 삭제
+     *
+     * @param cartItemId
+     * @return
+     */
     @DeleteMapping("/items/{cartItemId}")
     public ResponseEntity<Void> removeItemFromCart(
-            @PathVariable(name = "cartItemId") Long cartItemId) {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String email = authentication.getName();
-            User user = userService.getUserByEmail(email);
+            @PathVariable Long cartItemId, Authentication authentication) {
+        User user = userService.getUserByEmail(authentication.getName());
+        cartService.removeItemFromCart(user.getUserId(), cartItemId);
 
-            cartService.removeItemFromCart(user.getUserId(), cartItemId);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        return ResponseEntity.noContent().build();
     }
 
-    // 장바구니 아이템 수량 수정
+    /**
+     * 장바구니 상품의 수량을 수정
+     *
+     * @param cartItemId
+     * @param request
+     * @return 수정된 장바구니 상품 정보
+     */
     @PutMapping("/items/{cartItemId}")
-    public ResponseEntity<CartItem> updateCartItemQuantity(
-            @PathVariable(name = "cartItemId") Long cartItemId,
+    public ResponseEntity<CartItemResponse> updateCartItemQuantity(
+            @PathVariable Long cartItemId,
             @RequestBody Map<String, Integer> request,
-            @AuthenticationPrincipal String email) {
-        try {
-            logger.info(
-                    "장바구니 상품 수량 변경 시도 - 사용자: {}, 상품ID: {}, 수량: {}",
-                    email,
-                    cartItemId,
-                    request.get("quantity"));
-            User user = userService.getUserByEmail(email);
-            CartItem updatedItem =
-                    cartService.updateCartItemQuantity(
-                            user.getUserId(), cartItemId, request.get("quantity"));
-            logger.info("장바구니 상품 수량 변경 성공 - 사용자: {}, 상품ID: {}", email, cartItemId);
-            return ResponseEntity.ok(updatedItem);
-        } catch (Exception e) {
-            logger.error(
-                    "장바구니 상품 수량 변경 실패 - 사용자: {}, 상품ID: {}, 오류: {}",
-                    email,
-                    cartItemId,
-                    e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
+            Authentication authentication) {
+        User user = userService.getUserByEmail(authentication.getName());
+        CartItem updatedItem =
+                cartService.updateCartItemQuantity(
+                        user.getUserId(), cartItemId, request.get("quantity"));
+
+        return ResponseEntity.ok(CartItemResponse.from(updatedItem));
     }
 
-    private CartItemResponse convertToCartItemResponse(CartItem cartItem) {
-        CartItemResponse response = new CartItemResponse();
-        response.setCartItemId(cartItem.getCartItemId());
-        response.setProductId(cartItem.getProduct().getProductId());
-        response.setProductName(cartItem.getProduct().getName());
-        response.setPrice(cartItem.getProduct().getPrice());
-        response.setQuantity(cartItem.getQuantity());
-        response.setCategoryName(cartItem.getProduct().getCategory().getName());
-        return response;
-    }
-
-    // 주문 생성
+    /**
+     * 장바구니의 상품들로 주문을 생성 주문 생성 후 장바구니는 비워짐
+     *
+     * @return 생성된 주문 정보
+     */
     @PostMapping("/checkout")
-    public ResponseEntity<OrderEntity> checkout() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String email = authentication.getName();
-            User user = userService.getUserByEmail(email);
+    public ResponseEntity<OrderEntity> checkout(Authentication authentication) {
+        User user = userService.getUserByEmail(authentication.getName());
+        OrderEntity order = cartService.createOrderFromCart(user.getUserId());
 
-            OrderEntity order = cartService.createOrderFromCart(user.getUserId());
-            return ResponseEntity.ok(order);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        return ResponseEntity.ok(order);
     }
 
-    // 장바구니 비우기
+    /**
+     * 장바구니를 비움 장바구니에 담긴 모든 상품을 제거
+     *
+     * @return
+     */
     @DeleteMapping
-    public ResponseEntity<Void> clearCart() {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String email = authentication.getName();
-            User user = userService.getUserByEmail(email);
+    public ResponseEntity<Void> clearCart(Authentication authentication) {
+        User user = userService.getUserByEmail(authentication.getName());
+        cartService.clearCart(user.getUserId());
 
-            cartService.clearCart(user.getUserId());
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        return ResponseEntity.noContent().build();
     }
 }

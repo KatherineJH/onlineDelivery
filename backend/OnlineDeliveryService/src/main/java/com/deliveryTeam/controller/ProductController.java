@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.deliveryTeam.dto.ProductDto;
 import com.deliveryTeam.entity.Product;
 import com.deliveryTeam.service.ProductService;
 
@@ -43,8 +44,8 @@ public class ProductController {
 
     // 상품 등록
     @PostMapping("/create")
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product saved = productService.save(product);
+    public ResponseEntity<Product> createProduct(@RequestBody ProductDto dto) {
+        Product saved = productService.createProductFromDto(dto);
         return ResponseEntity.ok(saved);
     }
 }

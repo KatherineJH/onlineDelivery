@@ -59,6 +59,12 @@ public class AdminController {
     // 사용자 목록 조회
     @GetMapping("/users")
     public ResponseEntity<?> getAllUsers() {
-        return ResponseEntity.ok(adminService.getAllUsers());
+        try {
+            System.out.println("/api/admin/users 요청 도착");
+            return ResponseEntity.ok(adminService.getAllUsers());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("error!!! 관리자 목록 조회 중 오류 발생: " + e.getMessage());
+        }
     }
 }

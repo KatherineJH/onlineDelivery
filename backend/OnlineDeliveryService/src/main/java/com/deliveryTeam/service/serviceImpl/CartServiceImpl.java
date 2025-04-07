@@ -1,6 +1,5 @@
 package com.deliveryTeam.service.serviceImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -8,12 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.deliveryTeam.entity.Cart;
-import com.deliveryTeam.entity.CartItem;
-import com.deliveryTeam.entity.OrderEntity;
-import com.deliveryTeam.entity.OrderItem;
-import com.deliveryTeam.entity.Product;
-import com.deliveryTeam.entity.User;
+import com.deliveryTeam.entity.*;
 import com.deliveryTeam.repository.CartItemRepository;
 import com.deliveryTeam.repository.CartRepository;
 import com.deliveryTeam.repository.OrderItemRepository;
@@ -163,33 +157,46 @@ public class CartServiceImpl implements CartService {
     // 장바구니 아이템 기반으로 주문을 생성
     @Override
     public OrderEntity createOrderFromCart(Long userId) {
-        Cart cart = getCartByUserId(userId);
-        List<CartItem> cartItems = cartItemRepository.findByCartCartId(cart.getCartId());
+        //  유저 장바구니 가져오기
+        Cart cart =
+                cartRepository
+                        .findByUserUserId(userId)
+                        .orElseThrow(() -> new RuntimeException("장바구니가 존재하지 않습니다."));
 
+        List<CartItem> cartItems = cart.getCartItems();
         if (cartItems.isEmpty()) {
-            throw new RuntimeException("장바구니가 비어있습니다.");
+            throw new RuntimeException("장바구니가 비어 있습니다.");
         }
 
-        // 주문 생성
+        // 주문 객체 생성
         OrderEntity order = new OrderEntity();
         order.setUser(cart.getUser());
-        order.setStatus(OrderEntity.OrderStatus.PENDING);
-        order = orderRepository.save(order);
 
-        // 주문 아이템 생성
-        List<OrderItem> orderItems = new ArrayList<>();
+        // store는 첫 상품 기준
+        Store store = cartItems.get(0).getProduct().getStore();
+        order.setStore(store);
+
+        // 주문 항목 구성
         for (CartItem cartItem : cartItems) {
+            Product product = cartItem.getProduct();
+
             OrderItem orderItem = new OrderItem();
-            orderItem.setOrder(order);
-            orderItem.setProduct(cartItem.getProduct());
+            orderItem.setProduct(product);
             orderItem.setQuantity(cartItem.getQuantity());
-            orderItem.setPrice(cartItem.getProduct().getPrice());
-            orderItems.add(orderItem);
+            orderItem.setPrice(product.getPrice());
+
+            order.addOrderItem(orderItem);
         }
-        orderItemRepository.saveAll(orderItems);
+
+        // 총액 계산
+        order.calculateTotalAmount();
+
+        // 주문 저장
+        orderRepository.save(order);
 
         // 장바구니 비우기
-        clearCart(userId);
+        cart.getCartItems().clear(); // 관계 끊기
+        cartRepository.save(cart); // 업데이트 반영
 
         return order;
     }

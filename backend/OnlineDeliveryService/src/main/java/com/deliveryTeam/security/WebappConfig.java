@@ -18,7 +18,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @Configuration
 public class WebappConfig {
 
@@ -43,11 +45,12 @@ public class WebappConfig {
                                                 "/predict", "/predict/**" // 👉 까먹지 말고 나중에 지우자 꼭
                                                 "api/stores/**" // 매장 목록, 매장 상세
 
+                                                "/api/stores/**" // 매장 목록, 매장 상세
                                                 )
                                         .permitAll()
                                         // ✅ 관리자 또는 음식점 점주만 접근 가능한 관리자 API
                                         .requestMatchers("/api/admin/**")
-                                        .hasAnyRole("RESTAURANT_OWNER", "ADMIN")
+                                        .hasAnyAuthority("ROLE_RESTAURANT_OWNER", "ROLE_ADMIN")
                                         // ✅ 로그인한 일반 사용자(고객)만 접근 가능한 API
                                         .requestMatchers(
                                                 "/api/user/**", // 내 프로필 조회/수정

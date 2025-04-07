@@ -2,7 +2,6 @@ package com.deliveryTeam.service;
 
 import java.util.List;
 
-
 import com.deliveryTeam.entity.CUISINE_TYPE;
 import com.deliveryTeam.entity.Store;
 import com.deliveryTeam.http.request.StoreDTO;

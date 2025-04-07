@@ -6,11 +6,10 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
+@Table(name = "order_items")
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class OrderItem {
 
     @Id
@@ -25,7 +24,14 @@ public class OrderItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    private int quantity;
+    @Column(nullable = false)
+    private Integer quantity;
 
-    private BigDecimal price;
+    @Column(nullable = false)
+    private BigDecimal price; // 주문 당시의 상품 가격
+
+    // 항목 총액 계산
+    public BigDecimal calculateTotalPrice() {
+        return price.multiply(BigDecimal.valueOf(quantity));
+    }
 }

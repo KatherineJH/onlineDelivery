@@ -7,11 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.deliveryTeam.dto.StoreDTO;
 import com.deliveryTeam.entity.Address;
 import com.deliveryTeam.entity.CUISINE_TYPE;
 import com.deliveryTeam.entity.Store;
 import com.deliveryTeam.entity.User;
+import com.deliveryTeam.http.request.StoreDTO;
 import com.deliveryTeam.repository.StoreRepository;
 import com.deliveryTeam.repository.UserRepository;
 import com.deliveryTeam.service.StoreService;

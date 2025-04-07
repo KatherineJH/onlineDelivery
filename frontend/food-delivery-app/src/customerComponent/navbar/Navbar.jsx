@@ -2,21 +2,23 @@ import React from "react";
 import { Avatar, Badge, Box, IconButton } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { purple } from "@mui/material/colors";
-import { ShoppingCart } from "@mui/icons-material";
+import { Person, ShoppingCart } from "@mui/icons-material";
 import "./Navbar.css";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export const Navbar = () => {
-  // const { auth, cart } = useSelector((store) => store);
+  const { auth } = useSelector((store) => store);
   const navigate = useNavigate();
 
-  const handleClickAvatar = () => {
-    // if (auth.user?.role === "ROLE_CUSTOMER") {
-    navigate("/my-profile");
-    // } else {
-    //   navigate("/admin/restaurant");
-    // }
+  const handleAvatarClick = () => {
+    if (auth.user) {
+      console.log("Navigating to /my-profile");
+      navigate("/my-profile");
+    } else {
+      console.log("Navigating to /account/login");
+      navigate("/account/login");
+    }
   };
 
   return (
@@ -38,20 +40,23 @@ export const Navbar = () => {
         </div>
 
         <div>
-          <Avatar
-            onClick={handleClickAvatar}
-            sx={{ bgcolor: "white", color: purple.A700 }}
-          >
-            C
-          </Avatar>
+          {auth.user ? (
+            <Avatar
+              onClick={handleAvatarClick}
+              sx={{ bgcolor: "white", color: purple.A700 }}
+            >
+              {auth.user?.username[0].toUpperCase()}
+            </Avatar>
+          ) : (
+            <IconButton onClick={handleAvatarClick}>
+              <Person />
+            </IconButton>
+          )}
         </div>
 
         <div>
           <IconButton onClick={() => navigate("/cart")}>
-            <Badge
-              color="secondary"
-              // badgeContent={cart.cart?.item?.length || 0} // number of items in my cart
-            >
+            <Badge color="secondary">
               <ShoppingCart sx={{ fontSize: "1.5rem" }} />
             </Badge>
           </IconButton>
@@ -60,3 +65,5 @@ export const Navbar = () => {
     </Box>
   );
 };
+
+export default Navbar;

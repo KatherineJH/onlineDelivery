@@ -1,16 +1,16 @@
 import React from "react";
 import "./Home.css";
 import MultiItemCarousel from "./MultiItemCarousel";
-// import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export const Home = () => {
-  //   const dispatch = useDispatch();
-  //   const jwt = localStorage.getItem("jwt");
-  //   const { restaurant } = useSelector((store) => store);
-  //   console.log("restaurant", restaurant);
-  //   useEffect(() => {
-  //     dispatch(gettAllRestaurantsAction(jwt));
-  //   }, []);
+    const dispatch = useDispatch();
+    const jwt = localStorage.getItem("jwt");
+    // const { restaurant } = useSelector((store) => store);
+    // console.log("restaurant", restaurant);
+    // useEffect(() => {
+    //   dispatch(gettAllRestaurantsAction(jwt));
+    // }, []);
   return (
     <div className="pb-10">
       <section className="banner -z-50 relative flex flex-col justify-center items-center">

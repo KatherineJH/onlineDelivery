@@ -35,6 +35,13 @@ public class JwtTokenValidator extends OncePerRequestFilter {
             HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        // 👉 JWT 검증 제외: 잊지 말고 지우자 꼭꼭
+        String path = request.getRequestURI();
+        if (path.startsWith("/predict")) {
+            filterChain.doFilter(request, response); // 그냥 통과
+            return;
+        } // 👉 지워 제발 지워 지워
+
         String jwt =
                 request.getHeader(
                         JwtConstant

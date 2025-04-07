@@ -2,6 +2,11 @@ package com.deliveryTeam.service.serviceImpl;
 
 import java.util.List;
 
+import com.deliveryTeam.dto.ProductDto;
+import com.deliveryTeam.entity.Category;
+import com.deliveryTeam.entity.Store;
+import com.deliveryTeam.repository.CategoryRepository;
+import com.deliveryTeam.repository.StoreRepository;
 import org.springframework.stereotype.Service;
 
 import com.deliveryTeam.entity.Product;
@@ -15,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
+    private final CategoryRepository categoryRepository;
+    private final StoreRepository storeRepository;
 
     // product id로 검색
     public Product getProductById(Long id) {
@@ -39,7 +46,20 @@ public class ProductServiceImpl implements ProductService {
     }
 
     // 등록
-    public Product save(Product product) {
+    @Override
+    public Product createProductFromDto(ProductDto dto) {
+        Category category = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 카테고리입니다."));
+        Store store = storeRepository.findById(dto.getStoreId())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 매장입니다."));
+
+        Product product = new Product();
+        product.setName(dto.getName());
+        product.setPrice(dto.getPrice());
+        product.setCategory(category);
+        product.setStore(store);
+
         return productRepository.save(product);
     }
+
 }

@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +17,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+
 @RequiredArgsConstructor
 @Configuration
 public class WebappConfig {
@@ -41,7 +42,6 @@ public class WebappConfig {
                                                 "/api/products/**", // 음식 목록, 음식 상세
                                                 "/api/categories/**", // 음식 카테고리
                                                 "/api/stores/**" // 매장 목록, 매장 상세
-
                                                 )
                                         .permitAll()
                                         // ✅ 관리자 또는 음식점 점주만 접근 가능한 관리자 API

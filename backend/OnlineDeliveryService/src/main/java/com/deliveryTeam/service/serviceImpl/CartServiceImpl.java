@@ -1,14 +1,13 @@
 package com.deliveryTeam.service.serviceImpl;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.deliveryTeam.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.deliveryTeam.entity.*;
 import com.deliveryTeam.repository.CartItemRepository;
 import com.deliveryTeam.repository.CartRepository;
 import com.deliveryTeam.repository.OrderItemRepository;
@@ -159,8 +158,10 @@ public class CartServiceImpl implements CartService {
     @Override
     public OrderEntity createOrderFromCart(Long userId) {
         //  유저 장바구니 가져오기
-        Cart cart = cartRepository.findByUserUserId(userId)
-                .orElseThrow(() -> new RuntimeException("장바구니가 존재하지 않습니다."));
+        Cart cart =
+                cartRepository
+                        .findByUserUserId(userId)
+                        .orElseThrow(() -> new RuntimeException("장바구니가 존재하지 않습니다."));
 
         List<CartItem> cartItems = cart.getCartItems();
         if (cartItems.isEmpty()) {
@@ -195,9 +196,8 @@ public class CartServiceImpl implements CartService {
 
         // 장바구니 비우기
         cart.getCartItems().clear(); // 관계 끊기
-        cartRepository.save(cart);  // 업데이트 반영
+        cartRepository.save(cart); // 업데이트 반영
 
         return order;
     }
-
 }

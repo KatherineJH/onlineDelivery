@@ -2,15 +2,15 @@ package com.deliveryTeam.service.serviceImpl;
 
 import java.util.List;
 
-import com.deliveryTeam.dto.ProductDto;
-import com.deliveryTeam.entity.Category;
-import com.deliveryTeam.entity.Store;
-import com.deliveryTeam.repository.CategoryRepository;
-import com.deliveryTeam.repository.StoreRepository;
 import org.springframework.stereotype.Service;
 
+import com.deliveryTeam.dto.ProductDto;
+import com.deliveryTeam.entity.Category;
 import com.deliveryTeam.entity.Product;
+import com.deliveryTeam.entity.Store;
+import com.deliveryTeam.repository.CategoryRepository;
 import com.deliveryTeam.repository.ProductRepository;
+import com.deliveryTeam.repository.StoreRepository;
 import com.deliveryTeam.service.ProductService;
 
 import lombok.RequiredArgsConstructor;
@@ -48,10 +48,14 @@ public class ProductServiceImpl implements ProductService {
     // 등록
     @Override
     public Product createProductFromDto(ProductDto dto) {
-        Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 카테고리입니다."));
-        Store store = storeRepository.findById(dto.getStoreId())
-                .orElseThrow(() -> new RuntimeException("존재하지 않는 매장입니다."));
+        Category category =
+                categoryRepository
+                        .findById(dto.getCategoryId())
+                        .orElseThrow(() -> new RuntimeException("존재하지 않는 카테고리입니다."));
+        Store store =
+                storeRepository
+                        .findById(dto.getStoreId())
+                        .orElseThrow(() -> new RuntimeException("존재하지 않는 매장입니다."));
 
         Product product = new Product();
         product.setName(dto.getName());
@@ -61,5 +65,4 @@ public class ProductServiceImpl implements ProductService {
 
         return productRepository.save(product);
     }
-
 }

@@ -42,8 +42,7 @@ public class WebappConfig {
                                                 "/api/auth/**", // 로그인, 회원가입 등
                                                 "/api/products/**", // 음식 목록, 음식 상세
                                                 "/api/categories/**", // 음식 카테고리
-                                                "api/stores/**",// 매장 목록, 매장 상세
-
+                                                "api/stores/**", // 매장 목록, 매장 상세
                                                 "/api/stores/**" // 매장 목록, 매장 상세
                                                 )
                                         .permitAll()

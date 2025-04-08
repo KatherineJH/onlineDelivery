@@ -1,10 +1,9 @@
 package com.deliveryTeam.repository;
 
-import com.deliveryTeam.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface ReviewRepository extends JpaRepository<Review, Long> {
-}
+import com.deliveryTeam.entity.Review;
 
+@Repository
+public interface ReviewRepository extends JpaRepository<Review, Long> {}

@@ -22,11 +22,8 @@ public class Review {
     private double percentage; // 100.0 is the best, 0.0 is the worst
 
     // single review can have only one restaurant, however, one restaurant can have multiple reviews
-    @ManyToOne
-    private Store store;
+    @ManyToOne private Store store;
 
     // single review can have only one user, however, one user can have multiple reviews
-    @ManyToOne
-    private User user;
+    @ManyToOne private User user;
 }
-

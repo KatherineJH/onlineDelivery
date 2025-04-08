@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export const Navbar = () => {
-  const { auth } = useSelector((store) => store);
+  const auth = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const handleAvatarClick = () => {
@@ -34,7 +34,7 @@ export const Navbar = () => {
 
       <div className="flex items-center space-x-2 lg:space-x-10">
         <div>
-          <IconButton>
+        <IconButton onClick={() => navigate("/search")}>
             <SearchIcon sx={{ fontSize: "1.5rem" }} />
           </IconButton>
         </div>

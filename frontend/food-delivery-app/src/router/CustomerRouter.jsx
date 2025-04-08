@@ -7,6 +7,7 @@ import TopWords from "../customerComponent/review/Topwords";
 import RankedRestaurant from "../customerComponent/review/RankedRestaurant";
 import Auth from "../customerComponent/auth/Auth";
 import Profile from "../customerComponent/profile/Profile";
+import SearchPage from "../customerComponent/search/SearchPage";
 
 export const CustomerRouter = () => {
   return (
@@ -21,6 +22,7 @@ export const CustomerRouter = () => {
         <Route path="/top-words" element={<TopWords />} />{" "}
         {/* best 20와 worst 20 을 동시에 로드 */}
         <Route path="/rank-restaurants" element={<RankedRestaurant />} />
+        <Route path="/search" element={<SearchPage />} />
       </Routes>
       <Auth />
     </div>

@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { registerUser } from "../../state/authentication/Action";
 
 const initialValues = {
-  fullName: "",
+  username: "",
   email: "",
   password: "",
   role: "ROLE_CUSTOMER",

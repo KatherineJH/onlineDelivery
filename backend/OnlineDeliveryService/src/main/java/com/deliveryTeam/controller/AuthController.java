@@ -28,8 +28,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 /**
- * 인증 관련 API를 처리하는 컨트롤러 /api/auth/** : 비로그인 사용자도 접근 가능한 인증 관련 API /api/user/** :
- * 로그인한 사용자만 접근 가능한
+ * 인증 관련 API를 처리하는 컨트롤러 /api/auth/** : 비로그인 사용자도 접근 가능한 인증 관련 API /api/user/** : 로그인한 사용자만 접근 가능한
  * 사용자 관련 API
  */
 @RestController
@@ -56,9 +55,11 @@ public class AuthController {
             User savedUser = userService.registerUser(user);
 
             // 저장된 사용자 정보로 인증 처리
-            UserDetails userDetails = customerUserDetailsService.loadUserByUsername(savedUser.getEmail());
-            Authentication authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities());
+            UserDetails userDetails =
+                    customerUserDetailsService.loadUserByUsername(savedUser.getEmail());
+            Authentication authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             // JWT 토큰 생성
@@ -164,5 +165,4 @@ public class AuthController {
 
         return ResponseEntity.ok(user);
     }
-
 }

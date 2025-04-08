@@ -45,7 +45,7 @@ export const Navbar = () => {
               onClick={handleAvatarClick}
               sx={{ bgcolor: "white", color: purple.A700 }}
             >
-              {auth.user?.username[0].toUpperCase()}
+              {(auth.user?.username?.[0] || "U").toUpperCase()}
             </Avatar>
           ) : (
             <IconButton onClick={handleAvatarClick}>

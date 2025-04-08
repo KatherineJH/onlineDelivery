@@ -154,15 +154,15 @@ public class AuthController {
                 userDetails, null, userDetails.getAuthorities());
     }
 
-    @GetMapping("/api/user/me")
-    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
-        }
+    //  @GetMapping("/api/user/me")
+    //  public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+    //      if (authentication == null || !authentication.isAuthenticated()) {
+    //          return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+    //      }
 
-        String email = authentication.getName();
-        User user = userService.getUserByEmail(email);
+    //      String email = authentication.getName();
+    //      User user = userService.getUserByEmail(email);
 
-        return ResponseEntity.ok(user);
-    }
-}
+    //      return ResponseEntity.ok(user);
+    //  }
+ }

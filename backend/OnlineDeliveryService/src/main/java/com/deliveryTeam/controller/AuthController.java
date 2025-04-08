@@ -153,4 +153,16 @@ public class AuthController {
         return new UsernamePasswordAuthenticationToken(
                 userDetails, null, userDetails.getAuthorities());
     }
+
+    @GetMapping("/api/user/me")
+    public ResponseEntity<?> getCurrentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+
+        String email = authentication.getName();
+        User user = userService.getUserByEmail(email);
+
+        return ResponseEntity.ok(user);
+    }
 }

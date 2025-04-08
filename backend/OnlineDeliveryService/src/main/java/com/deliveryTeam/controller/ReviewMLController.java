@@ -1,5 +1,12 @@
 package com.deliveryTeam.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
 import com.deliveryTeam.entity.Review;
 import com.deliveryTeam.entity.Store;
 import com.deliveryTeam.entity.User;
@@ -9,13 +16,8 @@ import com.deliveryTeam.service.auth.CustomUserService;
 import com.deliveryTeam.service.serviceImpl.MLService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/predict")
@@ -27,7 +29,6 @@ public class ReviewMLController {
     private final ReviewRepository reviewRepository;
     private final StoreRepository storeRepository;
 
-
     @PostMapping
     public ResponseEntity<Map<String, Object>> requestPrediction(
             @RequestHeader("Authorization") String token,
@@ -36,8 +37,10 @@ public class ReviewMLController {
         try {
             User user = customUserService.findUserByJwtToken(token);
             Long restaurantId = Long.valueOf(inputData.get("restaurantId").toString());
-            Store store = storeRepository.findById(restaurantId)
-                    .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+            Store store =
+                    storeRepository
+                            .findById(restaurantId)
+                            .orElseThrow(() -> new RuntimeException("Restaurant not found"));
 
             String response = mlService.getPrediction(inputData); // 이건 JSON string임
 

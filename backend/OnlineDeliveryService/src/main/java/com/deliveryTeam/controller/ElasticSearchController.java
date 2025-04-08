@@ -1,14 +1,15 @@
 package com.deliveryTeam.controller;
 
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.deliveryTeam.entity.StoreDocument;
 import com.deliveryTeam.service.autoSearch.StoreElasticSearchService;
 import com.deliveryTeam.service.autoSearch.StoreIndexer;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/search")

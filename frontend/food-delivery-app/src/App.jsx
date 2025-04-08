@@ -9,7 +9,7 @@ import { getUser } from "./state/authentication/Action";
 
 function App() {
   const dispatch = useDispatch();
-  const { auth } = useSelector((store) => store);
+  const auth = useSelector((state) => state.auth);
   const jwt = localStorage.getItem("jwt");
   console.log("jwt in localStorage:", localStorage.getItem("jwt"));
 

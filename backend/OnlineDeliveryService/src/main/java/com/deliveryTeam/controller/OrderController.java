@@ -56,14 +56,14 @@ class OrderManagementController {
     private final OrderService orderService;
 
     /** 주문 상태 업데이트 */
-    @PutMapping("/orders/{orderId}/status")
-    public ResponseEntity<OrderEntity> updateOrderStatus(
-            @PathVariable Long orderId,
-            @RequestParam String status,
-            Authentication authentication) {
-        return ResponseEntity.ok(
-                orderService.updateOrderStatus(orderId, status, authentication.getName()));
-    }
+//    @PutMapping("/orders/{orderId}/status")
+//    public ResponseEntity<OrderEntity> updateOrderStatus(
+//            @PathVariable Long orderId,
+//            @RequestParam String status,
+//            Authentication authentication) {
+//        return ResponseEntity.ok(
+//                orderService.updateOrderStatus(orderId, status, authentication.getName()));
+//    }
 
     /** 매장의 주문 목록 조회 */
     @GetMapping("/orders/store/{storeId}")

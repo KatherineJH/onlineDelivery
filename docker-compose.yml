@@ -15,3 +15,46 @@ services:
     image: kibana:7.17.28
     ports:
       - "5601:5601"
+
+# services:
+#   flask:
+#     build: ./flaskApi
+#     ports:
+#       - "5000:5000"
+#     volumes:
+#       - ./flaskApi:/app
+
+#   elasticsearch:
+#     image: elasticsearch:8.13.0
+#     ports:
+#       - "9200:9200"
+#     environment:
+#       - discovery.type=single-node
+#     depends_on:
+#       - flask
+
+#   kibana:
+#     image: kibana:8.13.0
+#     ports:
+#       - "5601:5601"
+#     depends_on:
+#       - elasticsearch
+
+#   spring:
+#     build: ./backend/OnlineDeliveryService
+#     ports:
+#       - "5353:5353"   
+#     volumes:
+#       - ./backend/OnlineDeliveryService:/app
+#     depends_on:
+#       - kibana
+
+#   frontend:
+#     build: ./frontend/food-delivery-app
+#     ports:
+#       - "5173:5173"
+#     volumes:
+#       - ./frontend/food-delivery-app:/app
+#     command: npm run dev
+#     depends_on:
+#       - spring

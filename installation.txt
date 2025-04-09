@@ -1,0 +1,2 @@
+- open cmd on absolute path 
+> docker compose up

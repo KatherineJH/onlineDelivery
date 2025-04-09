@@ -1,8 +1,8 @@
-//package com.deliveryTeam.repository;
+// package com.deliveryTeam.repository;
 //
-//import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+// import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 //
-//import com.deliveryTeam.entity.StoreDocument;
+// import com.deliveryTeam.entity.StoreDocument;
 //
-//public interface StoreElasticSearchRepository
+// public interface StoreElasticSearchRepository
 //        extends ElasticsearchRepository<StoreDocument, Long> {}

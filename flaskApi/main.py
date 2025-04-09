@@ -222,7 +222,7 @@ def rank_restaurants():
 #         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
 
 
 # curl -X POST http://localhost:5000/rank-restaurants -H "Content-Type: application/json" -d "{\"reviews\": [\"The food was amazing and the staff were so friendly!\", \"I hated the meal. It was cold and tasteless.\", \"Loved the spicy noodles and fresh ingredients!\", \"Service was awful, and I won’t come back.\"], \"ratings\": [\"Positive\", \"Negative\", \"Positive\", \"Negative\"]}"

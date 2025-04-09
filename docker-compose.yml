@@ -1,17 +1,122 @@
+# version: '3.8'
+
+# services:
+#   elasticsearch:
+#     image: elasticsearch:7.17.28
+#     ports:
+#       - "9200:9200"
+#     environment:
+#       - discovery.type=single-node
+#     ulimits:
+#       memlock:
+#         soft: -1
+#         hard: -1
+#   kibana:
+#     image: kibana:7.17.28
+#     ports:
+#       - "5601:5601"
+
 version: '3.8'
 
 services:
   elasticsearch:
-    image: elasticsearch:7.17.28
+    build:
+      context: .         # Dockerfile이 있는 경로
+      dockerfile: Dockerfile
     ports:
-      - "9200:9200" 
+      - "9200:9200"
     environment:
       - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
     ulimits:
       memlock:
         soft: -1
         hard: -1
+    mem_limit: 1g
+
   kibana:
     image: kibana:7.17.28
     ports:
       - "5601:5601"
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+
+
+# networks:
+#   default:
+#     name: onlinedelivery_default
+
+# services:
+#   flask:
+#     build: ./flaskApi
+#     ports:
+#       - "5000:5000"
+#     volumes:
+#       - ./flaskApi:/app
+#     networks:
+#       - default
+
+#   mysql:
+#     image: mysql:8.0
+#     ports:
+#       - "3307:3306"
+#     environment:
+#       MYSQL_DATABASE: delivery_food
+#       MYSQL_ROOT_PASSWORD: root
+#       MYSQL_USER: bit
+#       MYSQL_PASSWORD: 1234
+#     volumes:
+#       - mysql_data:/var/lib/mysql
+#     networks:
+#       - default
+
+#   elasticsearch:
+#     image: elasticsearch:8.15.5  # 버전 동기화
+#     container_name: elasticsearch
+#     ports:
+#       - "9200:9200"
+#     environment:
+#       - discovery.type=single-node
+#       - xpack.security.enabled=false
+#     healthcheck:
+#       test: ["CMD", "curl", "-f", "http://localhost:9200"]
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5
+#     networks:
+#       - default
+
+#   spring:
+#     build: ./backend/OnlineDeliveryService
+#     ports:
+#       - "5353:5353"
+#     volumes:
+#       - ./backend/OnlineDeliveryService:/app
+#     depends_on:
+#       elasticsearch:
+#         condition: service_healthy
+#       mysql:
+#         condition: service_started
+#     environment:
+#       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/delivery_food
+#       - SPRING_DATASOURCE_USERNAME=bit
+#       - SPRING_DATASOURCE_PASSWORD=1234
+#       - SPRING_ELASTICSEARCH_URIS=http://elasticsearch:9200
+#     entrypoint: ["sh", "-c", "sleep 20 && java -jar /app/build/libs/OnlineDeliveryService-0.0.1-SNAPSHOT.war"]
+#     networks:
+#       - default
+
+#   frontend:
+#     build: ./frontend/food-delivery-app
+#     ports:
+#       - "5173:5173"
+#     command: npm run dev
+#     depends_on:
+#       - spring
+#     networks:
+#       - default
+
+# volumes:
+#   mysql_data:
